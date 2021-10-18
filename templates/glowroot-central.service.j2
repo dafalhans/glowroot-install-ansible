@@ -1,0 +1,13 @@
+[Unit]
+Description=Glowroot-central
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/java -jar /opt/glowroot-central/glowroot-central.jar
+StandardOutput=file:/var/log/something.out.txt
+StandardError=file:/var/log/something.err.txt
+Type=simple
+WorkingDirectory=/tmp/
+
+[Install]
+WantedBy=multi-user.target

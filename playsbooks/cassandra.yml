@@ -1,0 +1,56 @@
+---
+- name: Play to configure Cassandra Repo
+  hosts: rhelservers
+  tasks:
+    - name: Deploy the GPG public key
+      rpm_key: 
+        key: https://downloads.apache.org/cassandra/KEYS
+        state: present
+    
+    - name: Ensure the Cassandra Repo exists
+      yum_repository:
+        file: cassandra
+        name: Apache-Cassandra
+        description: Apache Cassandra repo
+        baseurl: https://downloads.apache.org/cassandra/redhat/311x/
+        enabled: yes
+        gpgcheck: yes
+        state: present
+
+
+- name: Install Cassandra
+  hosts: rhelservers
+  tasks:
+    - name: Install OpenJDK
+      dnf:
+        name: 
+            - java-1.8.0-openjdk-devel
+            - python2
+        state: present
+
+    - name: install Cassandra
+      dnf:
+        name: cassandra
+        state: present
+
+
+- name: Create cassandra service
+  hosts: all
+  vars:
+    - user: cassandra
+    - group: cassandra
+  tasks:
+    - name: configure systemd unit file
+      template:
+        src: ../templates/cassandra.service.j2
+        dest: /etc/systemd/system/cassandra.service
+
+- name: Start cassandra service
+  hosts: all
+  tasks:
+    - name: start cassandra
+      systemd:
+        name: cassandra
+        state: started
+        enabled: true
+        daemon_reload: yes

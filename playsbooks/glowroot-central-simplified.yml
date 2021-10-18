@@ -1,0 +1,8 @@
+- name: install glowroot
+  hosts: rhelservers
+  collections:
+    - havan.glowroot
+  roles:
+    - role: install_glowroot_central
+      tags: 
+        - installation

@@ -1,0 +1,14 @@
+---
+- name: firewall access to glowroot on 4000
+  hosts: rhelservers
+  tasks:
+    - name: firewalld permits access to glowroot process (on 4000 for UI access and 8181 for Agent gRPC access) 
+      firewalld:
+        port: "{{ item }}"
+        permanent: true
+        state: enabled
+        immediate: yes
+      loop:
+        - 4000/tcp
+        - 8181/tcp
+        - 7800/tcp

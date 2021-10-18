@@ -1,0 +1,67 @@
+{
+  "users": [
+    {
+      "username": "anonymous",
+      "roles": [
+        "Administrator"
+      ]
+    },
+    {
+      "username": "admin",
+      "passwordHash": "005PQPXB31t5QEc+UZNRkw:Kzs7v+nDPl4bwkOWCFRrDw:500000",
+      "roles": [
+        "Administrator"
+      ]
+    }
+  ],
+  "roles": [
+    {
+      "name": "Administrator",
+      "permissions": [
+        "agent:transaction",
+        "agent:error",
+        "agent:jvm",
+        "agent:incident",
+        "agent:config",
+        "admin"
+      ]
+    }
+  ],
+  "web": {
+    "port": {{ glowroot_port }},
+    "bindAddress": "{{ glowroot_bind_address }}",
+    "contextPath": "{{ glowroot_context_path }}",
+    "sessionTimeoutMinutes": 30,
+    "sessionCookieName": "GLOWROOT_SESSION_ID"
+  },
+  "storage": {
+    "rollupExpirationHours": [
+      {{ glowroot_rtjg_1m }},
+      {{ glowroot_rtjg_5m }},
+      {{ glowroot_rtjg_30m }},
+      {{ glowroot_rtjg_4h }}
+    ],
+    "traceExpirationHours": {{ glowroot_trace_data }},
+    "fullQueryTextExpirationHours": {{ glowroot_full_query_text }},
+    "rollupCappedDatabaseSizesMb": [
+      {{ glowroot_qscp_1m }},
+      {{ glowroot_qscp_5m }},
+      {{ glowroot_qscp_30m }},
+      {{ glowroot_qscp_4h }}
+    ],
+    "traceCappedDatabaseSizeMb": {{ glowroot_trace_detail_data }}
+{% if glowroot_ldap_host is defined %}
+  },
+  "ldap": {
+    "host": "{{ glowroot_ldap_host }}",
+    "port": {{ glowroot_ldap_port }},
+    "ssl": {{ glowroot_ldap_ssl | lower }},
+    "username": "{{ glowroot_ldap_username }}",
+    "password": "{{ glowroot_ldap_password }}",
+    "userBaseDn": "{{ glowroot_user_base_dn }}",
+    "userSearchFilter": "{{ glowroot_user_search_filter }}",
+    "groupBaseDn": "{{ glowroot_group_base_dn }}",
+    "groupSearchFilter": "{{ glowroot_group_search_filter }}"
+{% endif %}
+  }
+}

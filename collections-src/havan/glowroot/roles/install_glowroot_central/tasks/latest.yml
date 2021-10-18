@@ -1,0 +1,22 @@
+---
+- name: Latest - Get the latest version.
+  uri:
+    url: https://api.github.com/repos/glowroot/glowroot/releases/latest
+    method: GET
+    headers:
+      Accept: application/vnd.github.v3+json
+    body_format: json
+  register: get_latest_version
+  when: glowroot_version is not defined
+  changed_when: false
+
+- name: Latest - Set glowroot_version with the latest version.
+  set_fact:
+    glowroot_version: "{{ get_latest_version.json.tag_name[1:] }}"
+  when: glowroot_version is not defined
+
+- name: Latest - Get the actual version.
+  shell: "java -jar {{ glowroot_home_dir}}/glowroot.jar version |awk -F',' '{print $1}'"
+  register: glowroot_actual_version
+  when: glowroot_jar.stat.exists
+  changed_when: false

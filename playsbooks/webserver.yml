@@ -1,0 +1,56 @@
+---
+- name: play to setup webserver
+  hosts: rhelservers
+  tasks:
+    - name: latest httpd version installed
+      yum:
+        name: 
+          - httpd
+          - firewalld
+        state: latest
+
+    - name: correct index.html is present
+      copy:
+        src: ../files/index.html
+        dest: /var/www/html/index.html
+    
+    - name: httpd is started
+      service:
+        name: httpd
+        state: started
+        enabled: true
+
+    - name: firewall enabled and runnning
+      service:
+        name: firewalld
+        enabled: true
+        state: started
+    
+    - name: firewalld permits access to httpd service
+      firewalld:
+        service: http
+        permanent: true
+        state: enabled
+        immediate: yes
+
+
+- name: Test intranet webserver
+  hosts: localhost
+  become: no
+  tasks:
+    - name: connnect to web server
+      uri:
+        url: http://rhel1
+        return_content: yes
+        status_code: 200
+
+- name: /etc/hosts up to date
+  hosts: all
+  gather_facts: yes
+  tasks:
+    - name: Deploy /etc/hosts
+      template:
+        src: ../templates/hosts.j2
+        dest: /etc/hosts
+  tags:
+    - hostsfile

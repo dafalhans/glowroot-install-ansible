@@ -1,0 +1,10 @@
+---
+- name: "install_glowroot2"
+  hosts: rhelservers
+#   collections:
+#     - havan.glowroot
+  tasks:
+  - import_role:
+      name: havan.glowroot.install_glowroot
+    # - name: "install_glowroot2"
+    #     install_glowroot

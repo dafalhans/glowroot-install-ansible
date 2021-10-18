@@ -1,0 +1,52 @@
+---
+- name: install glowroot
+  hosts: rhelservers
+  # collections:
+  # - havan.glowroot
+  roles:
+    - role: havan.glowroot.install_glowroot_central
+      tags: 
+        - installation
+      
+
+- name: Create basic glowroot-central service
+  hosts: all
+  # vars:
+  #   - user: cassandra
+  #   - group: cassandra
+  tasks:
+    - name: configure glowroot-central systemd unit file
+      template:
+        src: ../templates/glowroot-central.service.j2
+        dest: /etc/systemd/system/glowroot-central.service
+    - name: create an empty StandardOutput file if it doesn't exist
+      file:
+        path: /var/log/glowroot-central.out
+        state: touch
+      tags: 
+        - servicecreation
+
+- name: Ensure jgroups-tcp.xml is downloaded
+  hosts: all
+  vars:
+    glowroot_jgroups_url: https://raw.githubusercontent.com/glowroot/glowroot/v0.13.6/central/src/main/resources/jgroups-tcp.xml
+  tasks:
+    - name: get the xml file
+      get_url:
+        url: "{{ glowroot_jgroups_url }}"
+        dest: "/opt/glowroot-central/jgroups-tcp.xml"
+  tags: 
+        - distributedservice
+
+- name: Start glowroot-central service
+  hosts: all
+  tasks:
+    - name: start glowroot-central
+      service:
+        name: glowroot-central
+        state: started
+        enabled: true
+        daemon_reload: yes
+      tags: 
+        - servicecreation
+        - servicestart

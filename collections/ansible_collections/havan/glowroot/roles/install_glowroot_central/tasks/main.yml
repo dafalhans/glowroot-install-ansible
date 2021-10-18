@@ -1,0 +1,57 @@
+---
+- name: Ensure prerequisite packages are present.
+  yum:
+    pkg: 'unzip'
+    state: present
+
+- name: Ensure install directory is present.
+  file:
+    path: "{{ glowroot_install_dir }}"
+    state: directory
+
+- name: Ensure glowroot is installed.
+  stat:
+    path: "{{ glowroot_home_dir }}/glowroot-central.jar"
+  register: glowroot_jar
+
+- include_tasks: latest.yml
+
+- include_tasks: installation.yml
+  when: (glowroot_jar.stat.exists == false or
+         glowroot_version != glowroot_actual_version.stdout)
+
+# - name: Ensure configuration files are present.
+#   template:
+#     src: "{{ item }}.j2"
+#     dest: "{{ glowroot_home_dir }}/{{ item }}"
+#     mode: 'g+rw'
+#   with_items:
+#   - 'admin.json'
+#   - 'config.json'
+
+- name: Ensure Glowroot group is present.
+  group:
+    name: "{{ glowroot_group }}"
+    state: present
+
+- name: Ensure Glowroot user is present.
+  user:
+    name: "{{ glowroot_owner }}"
+    state: present
+
+- name: Ensure Glowroot directory ownership.
+  file:
+    path: "{{ glowroot_home_dir }}"
+    owner: "{{ glowroot_owner }}"
+    group: "{{ glowroot_group }}"
+    mode: 'g+rw'
+    recurse: yes
+    state: directory
+
+- name: Add users to the Glowroot group.
+  user:
+    name:   "{{ item }}"
+    groups: "{{ glowroot_group }}"
+    append: yes
+  with_items: "{{ glowroot_group_members }}"
+  when: glowroot_group_members is defined

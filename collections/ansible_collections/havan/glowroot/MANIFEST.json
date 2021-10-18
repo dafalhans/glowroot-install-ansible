@@ -1,0 +1,30 @@
+{
+ "collection_info": {
+  "namespace": "havan",
+  "name": "glowroot",
+  "version": "1.0.0",
+  "authors": [
+   "your name hans.vandeweghe@be.ibm.com"
+  ],
+  "readme": "README.md",
+  "tags": [],
+  "description": "My attempt to learn Ansible collections, using https://github.com/olo-dw/ansible-role-glowroot as Ansible Role example",
+  "license": [
+   "GPL-2.0-or-later"
+  ],
+  "license_file": null,
+  "dependencies": {},
+  "repository": "http://example.com/repository",
+  "documentation": "http://docs.example.com",
+  "homepage": "http://example.com",
+  "issues": "http://example.com/issue/tracker"
+ },
+ "file_manifest_file": {
+  "name": "FILES.json",
+  "ftype": "file",
+  "chksum_type": "sha256",
+  "chksum_sha256": "268d8a831a18b009de497d093beec5060cb956d9a2e04efde4581a7e25110fd4",
+  "format": 1
+ },
+ "format": 1
+}
